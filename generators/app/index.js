@@ -3,12 +3,11 @@ var Generator   = require('yeoman-generator');
 var chalk       = require('chalk');
 var fs          = require('fs');
 
-module.exports = Generator.extend({
-    prompting: function() {
+module.exports = class extends Generator {
+    async prompting() {
+
         var f = process.cwd().split("/");
         var cwd = f[f.length - 1];
-
-        var done = this.async();
         this.context = {},
         this.context.author = process.env.LOGNAME || "Yeoman";
         this.context.cwd = cwd;
@@ -37,7 +36,7 @@ module.exports = Generator.extend({
         this.log(chalk.red('#                                                                                                                                   '));
 
         var prompts = [
-        	{
+            {
                 type: 'input',
                 name: 'theme_name',
                 message: 'Theme Name: ',
@@ -69,51 +68,38 @@ module.exports = Generator.extend({
             }
 
         ];
-
-
-		return this.prompt(prompts).then(function(props) {
-            
-            this.context.theme_name 	= props.theme_name;
-            this.context.output 		= props.output;
-            this.context.author 		= props.author;
-            this.context.description 	= props.description;
-            this.context.version 		= props.version;
-            
-            done();
-        }.bind(this));
-    },
-    writing: {
-        structure: function() {
-            this.log("web/scss/" + this.context.output + ".scss");
-            fs.access("web/scss/" + this.context.output + ".scss", fs.F_OK, (err) => {
-                if (err) {
-                    this.fs.copyTpl(
-                        this.templatePath('web/scss/custom.scss'),
-                        this.destinationPath('web/scss/'+ this.context.output + '.scss'), {
-                            context: this.context
-                        }
-                    );
-                    return
-                }
-                this.log('exists');
-                //file exists
-            });
-
-            // Generate gulpfile.js
-            this.fs.copyTpl(
-                this.templatePath('gulpfile.js'),
-                this.destinationPath('gulpfile.js'), {
-                    context: this.context
-                }
-            );
-
-            // Generate package.json
-            this.fs.copyTpl(
-                this.templatePath('package.json'),
-                this.destinationPath('package.json'), {
-                    context: this.context
-                }
-            );
-        }
+        this.answers = await this.prompt(prompts);
     }
-});
+
+    writing() {
+        fs.access("web/scss/" + this.answers.output + ".scss", fs.F_OK, (err) => {
+            if (err) {
+                this.fs.copyTpl(
+                    this.templatePath('web/scss/custom.scss'),
+                    this.destinationPath('web/scss/'+ this.answers.output + '.scss'), {
+                        context: this.answers
+                    }
+                );
+                return
+            }
+            this.log('exists');
+            //file exists
+        });
+
+        // Generate gulpfile.js
+        this.fs.copyTpl(
+            this.templatePath('gulpfile.js'),
+            this.destinationPath('gulpfile.js'), {
+                context: this.answers
+            }
+        );
+
+        // Generate package.json
+        this.fs.copyTpl(
+            this.templatePath('package.json'),
+            this.destinationPath('package.json'), {
+                context: this.answers
+            }
+        );
+    }
+};

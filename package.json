@@ -1,6 +1,6 @@
 {
   "name": "generator-m2scss",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "generate css from scss",
   "main": "generators/app/index.js",
   "scripts": {
