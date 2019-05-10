@@ -1,4 +1,4 @@
-# generator-magetwo-code [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+# generator-m2scss [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
 ## What it does
 This generator creates a `gulpfile.js` and `package.json` used to quickly generate CSS from SCSS. Best used with Magento2
 
